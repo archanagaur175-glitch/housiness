@@ -1,5 +1,6 @@
 package com.housiness.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey
 data class Invoice(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val orderId: Long,
+    @ColumnInfo(name = "order_ref")
     val orderRef: String,
     val customerName: String? = null,
     val subtotal: Long,
