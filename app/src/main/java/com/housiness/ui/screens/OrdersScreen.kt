@@ -108,17 +108,17 @@ fun OrdersScreen() {
                 }
 
                 items(state.upcomingOrders, key = { it.id }) { order ->
-                    val dismissState = rememberSwipeToDismissBoxState(
+                    val dismissState = rememberDismissState(
                         confirmValueChange = {
-                            if (it == SwipeToDismissBoxValue.EndToStart) {
+                            if (it == DismissValue.DismissedToStart) {
                                 vm.markComplete(order)
                                 true
                             } else false
                         }
                     )
-                    SwipeToDismissBox(
+                    SwipeToDismiss(
                         state = dismissState,
-                        backgroundContent = {
+                        background = {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -133,10 +133,11 @@ fun OrdersScreen() {
                                 )
                             }
                         },
-                        enableDismissFromStartToEnd = false
-                    ) {
-                        OrderCard(order = order, onClick = { vm.selectOrder(order) })
-                    }
+                        dismissContent = {
+                            OrderCard(order = order, onClick = { vm.selectOrder(order) })
+                        },
+                        directions = setOf(DismissDirection.EndToStart)
+                    )
                 }
 
                 item {

@@ -119,7 +119,7 @@ fun HomeScreen(onNavigateToProducts: () -> Unit = {}) {
                 AnimatedFinancialCard(
                     emoji = "\uD83D\uDCB0",
                     label = "Your margin",
-                    value = if (summary.avgMargin != null) "${summary.avgMargin.toInt()}%" else "-",
+                    value = summary.avgMargin?.let { "${it.toInt()}%" } ?: "-",
                     visible = summary.hasOrders,
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
