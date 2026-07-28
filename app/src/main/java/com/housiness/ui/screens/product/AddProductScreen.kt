@@ -76,12 +76,14 @@ fun AddProductScreen(
                                 0 -> if (state.isStep1Valid) vm.setStep(1)
                                 1 -> if (state.isStep2Valid) vm.setStep(2)
                                 2 -> vm.save()
+                                else -> {}
                             }
                         },
                         enabled = when (state.step) {
                             0 -> state.isStep1Valid
                             1 -> state.isStep2Valid
                             2 -> true
+                            else -> false
                         } && !state.isSaving
                     ) {
                         if (state.isSaving) {
