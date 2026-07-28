@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.housiness.ui.screens.invoice.InvoiceHistoryScreen
 import com.housiness.ui.screens.invoice.InvoicePreviewScreen
 import com.housiness.ui.screens.backup.BackupRestoreScreen
+import com.housiness.ui.screens.pantry.PantryScreen
 import com.housiness.ui.screens.template.TemplateEditScreen
 import com.housiness.ui.screens.template.TemplateListScreen
 
@@ -27,6 +28,7 @@ fun SettingsScreen() {
     var showTemplates by remember { mutableStateOf(false) }
     var editingTemplateId by remember { mutableStateOf<Long?>(null) }
     var showBackup by remember { mutableStateOf(false) }
+    var showPantry by remember { mutableStateOf(false) }
 
     if (previewInvoiceId != null) {
         InvoicePreviewScreen(
@@ -66,6 +68,11 @@ fun SettingsScreen() {
 
     if (showBackup) {
         BackupRestoreScreen(onBack = { showBackup = false })
+        return
+    }
+
+    if (showPantry) {
+        PantryScreen(onBack = { showPantry = false })
         return
     }
 
@@ -141,7 +148,7 @@ fun SettingsScreen() {
             }
 
             Card(
-                onClick = { },
+                onClick = { showPantry = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -151,10 +158,10 @@ fun SettingsScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Icon(Icons.Filled.Inventory2, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Filled.Inventory2, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary)
                     Column {
                         Text("Pantry Manager", style = MaterialTheme.typography.titleMedium)
-                        Text("Coming soon", style = MaterialTheme.typography.bodySmall)
+                        Text("View and manage saved materials", style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }

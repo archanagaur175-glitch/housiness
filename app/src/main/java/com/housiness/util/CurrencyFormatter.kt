@@ -11,7 +11,7 @@ object CurrencyFormatter {
         }
     }
 
-    fun format(paisa: Long): String {
-        return format.format(paisa / 100.0)
+    fun format(rupees: Long): String {
+        return format.format(rupees)
     }
 }

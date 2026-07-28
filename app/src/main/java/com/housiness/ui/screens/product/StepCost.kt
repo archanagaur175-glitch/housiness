@@ -161,7 +161,7 @@ private fun MaterialRow(
 
             OutlinedTextField(
                 value = material.name,
-                onValueChange = { onUpdate { it.copy(name = it.name) } },
+                onValueChange = { v -> onUpdate { it.copy(name = v) } },
                 label = { Text("Material name") },
                 placeholder = { Text("e.g. Flour") },
                 singleLine = true,
@@ -291,7 +291,7 @@ private fun MaterialRow(
             ) {
                 Checkbox(
                     checked = material.saveToPantry,
-                    onCheckedChange = { onUpdate { it.copy(saveToPantry = it.saveToPantry) } }
+                    onCheckedChange = { onUpdate { it.copy(saveToPantry = !it.saveToPantry) } }
                 )
                 Text(
                     "Save to pantry",

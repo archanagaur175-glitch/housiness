@@ -22,6 +22,7 @@ class ProductRepository(private val productDao: ProductDao, private val productM
         productMaterialDao.getByProductId(productId)
 
     suspend fun saveMaterials(materials: List<ProductMaterial>) {
+        if (materials.isEmpty()) return
         productMaterialDao.deleteByProductId(materials.first().productId)
         productMaterialDao.upsertAll(materials)
     }

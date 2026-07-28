@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.housiness.data.db.entity.PantryItem
+import com.housiness.util.CurrencyFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,7 @@ fun PantryPickerSheet(
                                     style = MaterialTheme.typography.titleSmall
                                 )
                                 Text(
-                                    text = "${item.unitType.name} \u2022 \u20B9 ${item.unitCost}/${item.unitType.name.lowercase()}",
+                                    text = "${item.unitType.name} \u2022 ${CurrencyFormatter.format(item.unitCost)}/${item.unitType.name.lowercase()}",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

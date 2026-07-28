@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.housiness.HousinessApp
 import com.housiness.data.db.entity.Product
 import com.housiness.ui.screens.product.AddProductScreen
+import com.housiness.ui.screens.product.ProductEditScreen
 import com.housiness.util.CurrencyFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,11 +28,21 @@ fun ProductsScreen() {
     val products by repo.getAllFlow().collectAsStateWithLifecycle(initialValue = emptyList())
 
     var showAddScreen by remember { mutableStateOf(false) }
+    var editProductId by remember { mutableStateOf<Long?>(null) }
 
     if (showAddScreen) {
         AddProductScreen(
             onSaved = { showAddScreen = false },
             onBack = { showAddScreen = false }
+        )
+        return
+    }
+
+    if (editProductId != null) {
+        ProductEditScreen(
+            productId = editProductId!!,
+            onBack = { editProductId = null },
+            onSaved = { editProductId = null }
         )
         return
     }
@@ -84,16 +95,21 @@ fun ProductsScreen() {
                     )
                 }
                 items(products, key = { it.id }) { product ->
-                    ProductCard(product)
+                    ProductCard(
+                        product = product,
+                        onEdit = { editProductId = product.id }
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProductCard(product: Product) {
+private fun ProductCard(product: Product, onEdit: () -> Unit) {
     Card(
+        onClick = onEdit,
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant

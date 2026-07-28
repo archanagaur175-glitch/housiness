@@ -172,7 +172,7 @@ class ProductViewModel(
                 )
                 val productId = productRepository.insert(product)
 
-                if (s.costSource == CostSource.CALCULATED) {
+                if (s.costSource == CostSource.CALCULATED && s.materials.isNotEmpty()) {
                     val materials = s.materials.map { mat ->
                         ProductMaterial(
                             productId = productId,
