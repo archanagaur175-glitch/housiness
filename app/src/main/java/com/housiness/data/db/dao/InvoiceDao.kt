@@ -18,8 +18,8 @@ interface InvoiceDao {
     @Query("SELECT * FROM invoices WHERE orderId = :orderId")
     suspend fun getByOrderId(orderId: Long): Invoice?
 
-    @Query("SELECT CAST(SUBSTR(order_ref, 5) AS INTEGER) FROM invoices ORDER BY CAST(SUBSTR(order_ref, 5) AS INTEGER) DESC LIMIT 1")
-    suspend fun getMaxNumericInvoiceRef(): Long?
+    @Query("SELECT order_ref FROM invoices ORDER BY id DESC LIMIT 1")
+    suspend fun getLastOrderRef(): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(invoices: List<Invoice>)

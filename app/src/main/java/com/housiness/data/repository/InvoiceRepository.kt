@@ -20,7 +20,8 @@ class InvoiceRepository(
     suspend fun getByOrderId(orderId: Long): Invoice? = invoiceDao.getByOrderId(orderId)
 
     suspend fun getNextInvoiceNumber(): String {
-        val maxNum = invoiceDao.getMaxNumericInvoiceRef() ?: 0L
+        val lastRef = invoiceDao.getLastOrderRef()
+        val maxNum = lastRef?.removePrefix("INV-")?.toLongOrNull() ?: 0L
         return "INV-${String.format("%03d", maxNum + 1)}"
     }
 
