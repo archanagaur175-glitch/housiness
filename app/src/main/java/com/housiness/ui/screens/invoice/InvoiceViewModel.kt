@@ -53,8 +53,8 @@ class InvoiceViewModel(
                     lineItems
                 )
                 _state.value = _state.value.copy(pdfFile = file, isGenerating = false)
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(isGenerating = false, error = e.message)
+            } catch (e: Throwable) {
+                _state.value = _state.value.copy(isGenerating = false, error = e.message ?: "PDF generation failed")
             }
         }
     }

@@ -161,6 +161,7 @@ class ProductViewModel(
 
         viewModelScope.launch {
             _state.value = s.copy(isSaving = true, error = null)
+            var productId: Long? = null
             try {
                 val now = System.currentTimeMillis()
                 val product = Product(
@@ -170,12 +171,12 @@ class ProductViewModel(
                     costSource = s.costSource,
                     createdAt = now
                 )
-                val productId = productRepository.insert(product)
+                productId = productRepository.insert(product)
 
                 if (s.costSource == CostSource.CALCULATED && s.materials.isNotEmpty()) {
                     val materials = s.materials.map { mat ->
                         ProductMaterial(
-                            productId = productId,
+                            productId = productId!!,
                             materialId = mat.pantryItemId,
                             name = mat.name,
                             unitType = mat.unitType,
@@ -189,20 +190,26 @@ class ProductViewModel(
                     productRepository.saveMaterials(materials)
 
                     s.materials.filter { it.saveToPantry && it.name.isNotBlank() }.forEach { mat ->
+                        val pantryUnitCost = when (mat.entryMode) {
+                            MaterialEntryMode.FLAT -> mat.flatCost.toLongOrNull() ?: 0
+                            MaterialEntryMode.UNIT_BASED -> {
+                                val p = mat.pricePaid.toLongOrNull() ?: 0
+                                val sz = mat.unitSize.toLongOrNull() ?: 1
+                                if (sz > 0) p / sz else 0
+                            }
+                        }
                         pantryRepository.insert(
                             PantryItem(
                                 name = mat.name,
                                 unitType = mat.unitType,
-                                unitCost = mat.calculatedCost,
+                                unitCost = pantryUnitCost,
                                 lastUsed = now
                             )
                         )
                     }
                 }
-
-                _state.value = _state.value.copy(isSaving = false, savedProductId = productId)
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(isSaving = false, error = e.message)
+            } catch (e: Throwable) {
+                _state.value = _state.value.copy(isSaving = false, error = e.message ?: "Save failed", savedProductId = productId ?: _state.value.savedProductId)
             }
         }
     }

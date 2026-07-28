@@ -65,26 +65,29 @@ class OrderViewModel(
 
     fun generateInvoice(order: Order) {
         viewModelScope.launch {
-            val ref = invoiceRepository.getNextInvoiceNumber()
-            val invoice = com.housiness.data.db.entity.Invoice(
-                orderId = order.id,
-                orderRef = ref,
-                subtotal = order.totalPrice,
-                generatedAt = System.currentTimeMillis()
-            )
-            val invoiceId = invoiceRepository.insert(invoice)
+            try {
+                val ref = invoiceRepository.getNextInvoiceNumber()
+                val invoice = com.housiness.data.db.entity.Invoice(
+                    orderId = order.id,
+                    orderRef = ref,
+                    subtotal = order.totalPrice,
+                    generatedAt = System.currentTimeMillis()
+                )
+                val invoiceId = invoiceRepository.insert(invoice)
 
-            val lineItem = com.housiness.data.db.entity.InvoiceLineItem(
-                invoiceId = invoiceId,
-                productName = order.productName,
-                quantity = order.quantity,
-                unitPrice = order.totalPrice / order.quantity,
-                total = order.totalPrice
-            )
-            invoiceRepository.saveLineItems(listOf(lineItem))
+                val safeQty = if (order.quantity > 0) order.quantity else 1
+                val lineItem = com.housiness.data.db.entity.InvoiceLineItem(
+                    invoiceId = invoiceId,
+                    productName = order.productName,
+                    quantity = order.quantity,
+                    unitPrice = order.totalPrice / safeQty,
+                    total = order.totalPrice
+                )
+                invoiceRepository.saveLineItems(listOf(lineItem))
 
-            orderRepository.update(order.copy(invoiceId = invoiceId, status = OrderStatus.COMPLETED))
-            _state.update { it.copy(invoiceGeneratedId = invoiceId, showDetailSheet = false) }
+                orderRepository.update(order.copy(invoiceId = invoiceId, status = OrderStatus.COMPLETED))
+                _state.update { it.copy(invoiceGeneratedId = invoiceId, showDetailSheet = false) }
+            } catch (_: Exception) { }
         }
     }
 

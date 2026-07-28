@@ -30,12 +30,18 @@ fun AddProductScreen(
     )
     val state by vm.state.collectAsStateWithLifecycle()
     val pantryItems by vm.pantryItems.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.savedProductId) {
         if (state.savedProductId != null) onSaved()
     }
 
+    LaunchedEffect(state.error) {
+        state.error?.let { snackbarHostState.showSnackbar(it) }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Add Product") },
