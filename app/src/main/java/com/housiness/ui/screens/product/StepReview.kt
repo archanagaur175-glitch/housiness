@@ -42,7 +42,7 @@ fun StepReview(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-                HorizontalDivider()
+                Divider()
                 DetailRow("Selling price", "\u20B9 $sellingPrice")
                 DetailRow("Making cost", "\u20B9 $makingCost")
                 DetailRow("Profit", "\u20B9 ${sellingPrice - makingCost}")

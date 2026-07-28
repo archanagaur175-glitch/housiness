@@ -35,7 +35,7 @@ fun OrderDetailSheet(
                 fontWeight = FontWeight.Bold
             )
 
-            HorizontalDivider()
+            Divider()
 
             DetailRow("Quantity", "x${order.quantity}")
             DetailRow("Total price", CurrencyFormatter.format(order.totalPrice))

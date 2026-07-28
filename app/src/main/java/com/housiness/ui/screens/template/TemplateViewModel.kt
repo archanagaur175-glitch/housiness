@@ -38,8 +38,8 @@ class TemplateViewModel(
         }
     }
 
-    fun setTitle(value: String) { _editState.update { it.copy(title = value) } }
-    fun setBody(value: String) { _editState.update { it.copy(body = value) } }
+    fun setTitle(value: String) { _editState.value = _editState.value.copy(title = value) }
+    fun setBody(value: String) { _editState.value = _editState.value.copy(body = value) }
 
     fun save() {
         val s = _editState.value

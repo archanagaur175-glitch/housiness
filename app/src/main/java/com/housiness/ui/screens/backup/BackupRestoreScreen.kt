@@ -30,6 +30,7 @@ fun BackupRestoreScreen(onBack: () -> Unit) {
 
     var showImportDialog by remember { mutableStateOf(false) }
     var pendingImportData by remember { mutableStateOf<BackupManager.ValidationResult.Valid?>(null) }
+    var importWarning by remember { mutableStateOf<String?>(null) }
     var isBusy by remember { mutableStateOf(false) }
     var statusText by remember { mutableStateOf<String?>(null) }
 

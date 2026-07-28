@@ -85,6 +85,7 @@ fun InvoiceHistoryScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InvoiceHistoryCard(invoice: Invoice, onClick: (Long) -> Unit) {
     Card(

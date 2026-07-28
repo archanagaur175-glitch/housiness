@@ -3,15 +3,17 @@ package com.housiness.util
 import android.content.Context
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
-import androidx.compose.runtime.Composable
+import android.view.View
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.FileProvider
 import androidx.core.view.drawToBitmap
+import com.housiness.data.db.entity.Invoice
+import com.housiness.data.db.entity.InvoiceLineItem
+import com.housiness.ui.screens.invoice.InvoicePdfContent
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.ceil
-import kotlin.math.min
 
 object PdfGenerator {
 
@@ -22,14 +24,17 @@ object PdfGenerator {
     fun generateInvoicePdf(
         context: Context,
         fileName: String,
-        content: @Composable () -> Unit
+        invoice: Invoice,
+        lineItems: List<InvoiceLineItem>
     ): File {
         val pageWidthPx = (PAGE_WIDTH_PT * RENDER_SCALE).toInt()
         val pageHeightPx = (PAGE_HEIGHT_PT * RENDER_SCALE).toInt()
 
         val composeView = ComposeView(context).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-            setContent { content() }
+            setContent {
+                InvoicePdfContent(invoice = invoice, lineItems = lineItems)
+            }
             measure(
                 View.MeasureSpec.makeMeasureSpec(pageWidthPx, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -41,10 +46,10 @@ object PdfGenerator {
 
         val pageCount = ceil(fullBitmap.height.toFloat() / pageHeightPx).toInt()
         val document = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH_PT.toInt(), PAGE_HEIGHT_PT.toInt(), 1)
 
         for (i in 0 until pageCount) {
-            val page = document.startPage(pageInfo.setPageNumber(i + 1).create())
+            val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH_PT.toInt(), PAGE_HEIGHT_PT.toInt(), i + 1).create()
+            val page = document.startPage(pageInfo)
             val canvas = page.canvas
 
             canvas.save()

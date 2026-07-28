@@ -45,7 +45,7 @@ fun InvoicePdfContent(
             )
         }
 
-        HorizontalDivider(thickness = 2.dp)
+        Divider(thickness = 2.dp)
 
         // Business info
         Text(
@@ -58,7 +58,7 @@ fun InvoicePdfContent(
             style = MaterialTheme.typography.bodySmall
         )
 
-        HorizontalDivider()
+        Divider()
 
         // Line items header
         Row(
@@ -71,7 +71,7 @@ fun InvoicePdfContent(
             Text("Total", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
         }
 
-        HorizontalDivider(thickness = 1.dp)
+        Divider(thickness = 1.dp)
 
         // Line items
         lineItems.forEach { item ->
@@ -87,7 +87,7 @@ fun InvoicePdfContent(
             Spacer(Modifier.height(4.dp))
         }
 
-        HorizontalDivider(thickness = 2.dp)
+        Divider(thickness = 2.dp)
 
         // Total
         Row(

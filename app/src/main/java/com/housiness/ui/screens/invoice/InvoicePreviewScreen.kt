@@ -38,10 +38,7 @@ fun InvoicePreviewScreen(
 
     LaunchedEffect(state.invoice, state.lineItems) {
         if (state.invoice != null && state.pdfFile == null && !state.isGenerating) {
-            vm.generatePdf(context) {
-                val invoice = state.invoice ?: return@generatePdf
-                InvoicePdfContent(invoice = invoice, lineItems = state.lineItems)
-            }
+            vm.generatePdf(context)
         }
     }
 

@@ -127,6 +127,7 @@ fun AddProductScreen(
                         makingCost = state.computedMakingCost,
                         materials = state.materials
                     )
+                    else -> {}
                 }
             }
         }

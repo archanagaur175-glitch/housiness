@@ -36,19 +36,21 @@ class InvoiceViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val invoice = invoiceRepository.getById(invoiceId)
             val lineItems = invoiceRepository.getLineItems(invoiceId)
-            _state.update { it.copy(invoice = invoice, lineItems = lineItems) }
+            _state.value = _state.value.copy(invoice = invoice, lineItems = lineItems)
         }
     }
 
-    fun generatePdf(context: Context, content: @Composable () -> Unit) {
+    fun generatePdf(context: Context) {
         val invoice = _state.value.invoice ?: return
+        val lineItems = _state.value.lineItems
         _state.value = _state.value.copy(isGenerating = true, error = null)
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val file = PdfGenerator.generateInvoicePdf(
                     context,
                     "${invoice.orderRef}.pdf",
-                    content
+                    invoice,
+                    lineItems
                 )
                 _state.value = _state.value.copy(pdfFile = file, isGenerating = false)
             } catch (e: Exception) {

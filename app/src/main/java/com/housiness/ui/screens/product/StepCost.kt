@@ -130,6 +130,7 @@ fun StepCost(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MaterialRow(
     index: Int,
