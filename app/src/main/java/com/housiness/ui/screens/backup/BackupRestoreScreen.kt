@@ -50,7 +50,8 @@ fun BackupRestoreScreen(onBack: () -> Unit) {
                         orderDao = app.serviceLocator.orderDao,
                         invoiceDao = app.serviceLocator.invoiceDao,
                         invoiceLineItemDao = app.serviceLocator.invoiceLineItemDao,
-                        messageTemplateDao = app.serviceLocator.messageTemplateDao
+                        messageTemplateDao = app.serviceLocator.messageTemplateDao,
+                        settingsDao = app.serviceLocator.settingsDao
                     )
                 }
                 withContext(Dispatchers.IO) {
@@ -131,7 +132,8 @@ fun BackupRestoreScreen(onBack: () -> Unit) {
                                     orderDao = app.serviceLocator.orderDao,
                                     invoiceDao = app.serviceLocator.invoiceDao,
                                     invoiceLineItemDao = app.serviceLocator.invoiceLineItemDao,
-                                    messageTemplateDao = app.serviceLocator.messageTemplateDao
+                                    messageTemplateDao = app.serviceLocator.messageTemplateDao,
+                                    settingsDao = app.serviceLocator.settingsDao
                                 )
                             }
                             statusText = "Backup loaded (merge)!"
@@ -163,7 +165,8 @@ fun BackupRestoreScreen(onBack: () -> Unit) {
                                     orderDao = app.serviceLocator.orderDao,
                                     invoiceDao = app.serviceLocator.invoiceDao,
                                     invoiceLineItemDao = app.serviceLocator.invoiceLineItemDao,
-                                    messageTemplateDao = app.serviceLocator.messageTemplateDao
+                                    messageTemplateDao = app.serviceLocator.messageTemplateDao,
+                                    settingsDao = app.serviceLocator.settingsDao
                                 )
                             }
                             statusText = "Backup loaded (replace)!"

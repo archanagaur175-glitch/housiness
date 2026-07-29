@@ -29,7 +29,8 @@ object PdfGenerator {
         context: Context,
         fileName: String,
         invoice: Invoice,
-        lineItems: List<InvoiceLineItem>
+        lineItems: List<InvoiceLineItem>,
+        businessName: String = "Your Business Name"
     ): File {
         val document = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH_PT.toInt(), PAGE_HEIGHT_PT.toInt(), 1).create()
@@ -85,7 +86,7 @@ object PdfGenerator {
         y += 20f
 
         // Business info
-        canvas.drawText("Your Business Name", MARGIN, y, boldPaint)
+        canvas.drawText(businessName, MARGIN, y, boldPaint)
         y += 20f
         canvas.drawText("Date: ${sdf.format(Date(invoice.generatedAt))}", MARGIN, y, smallPaint)
         y += 25f

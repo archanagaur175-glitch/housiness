@@ -8,6 +8,7 @@ import com.housiness.data.db.entity.Invoice
 import com.housiness.data.db.entity.InvoiceLineItem
 import com.housiness.data.repository.InvoiceRepository
 import com.housiness.data.repository.OrderRepository
+import com.housiness.data.repository.SettingsRepository
 import com.housiness.util.PdfGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,16 +27,21 @@ data class InvoiceUiState(
 
 class InvoiceViewModel(
     private val invoiceRepository: InvoiceRepository,
-    private val orderRepository: OrderRepository
+    private val orderRepository: OrderRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(InvoiceUiState())
     val state: StateFlow<InvoiceUiState> = _state.asStateFlow()
 
+    private var businessName: String = "Your Business Name"
+
     fun loadInvoice(invoiceId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val invoice = invoiceRepository.getById(invoiceId)
             val lineItems = invoiceRepository.getLineItems(invoiceId)
+            val settings = settingsRepository.get()
+            if (settings != null) businessName = settings.businessName
             _state.value = _state.value.copy(invoice = invoice, lineItems = lineItems)
         }
     }
@@ -50,7 +56,8 @@ class InvoiceViewModel(
                     context,
                     "${invoice.orderRef}.pdf",
                     invoice,
-                    lineItems
+                    lineItems,
+                    businessName
                 )
                 _state.value = _state.value.copy(pdfFile = file, isGenerating = false)
             } catch (e: Throwable) {
@@ -61,10 +68,11 @@ class InvoiceViewModel(
 
     class Factory(
         private val invoiceRepository: InvoiceRepository,
-        private val orderRepository: OrderRepository
+        private val orderRepository: OrderRepository,
+        private val settingsRepository: SettingsRepository
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            InvoiceViewModel(invoiceRepository, orderRepository) as T
+            InvoiceViewModel(invoiceRepository, orderRepository, settingsRepository) as T
     }
 }

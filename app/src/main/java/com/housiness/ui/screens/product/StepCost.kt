@@ -223,6 +223,7 @@ private fun MaterialRow(
                             },
                             label = { Text("Size") },
                             singleLine = true,
+                            suffix = { Text(material.unitType.name.lowercase(), style = MaterialTheme.typography.bodySmall) },
                             modifier = Modifier.weight(1f),
                             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                                 keyboardType = androidx.compose.ui.text.input.KeyboardType.Number

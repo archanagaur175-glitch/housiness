@@ -27,7 +27,8 @@ fun InvoicePreviewScreen(
     val vm: InvoiceViewModel = viewModel(
         factory = InvoiceViewModel.Factory(
             app.serviceLocator.invoiceRepository,
-            app.serviceLocator.orderRepository
+            app.serviceLocator.orderRepository,
+            app.serviceLocator.settingsRepository
         )
     )
     val state by vm.state.collectAsStateWithLifecycle()

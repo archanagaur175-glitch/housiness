@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Message
@@ -12,13 +13,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.housiness.HousinessApp
+import com.housiness.data.db.entity.AppSettings
 import com.housiness.ui.screens.invoice.InvoiceHistoryScreen
 import com.housiness.ui.screens.invoice.InvoicePreviewScreen
 import com.housiness.ui.screens.backup.BackupRestoreScreen
 import com.housiness.ui.screens.pantry.PantryScreen
 import com.housiness.ui.screens.template.TemplateEditScreen
 import com.housiness.ui.screens.template.TemplateListScreen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +34,14 @@ fun SettingsScreen() {
     var editingTemplateId by remember { mutableStateOf<Long?>(null) }
     var showBackup by remember { mutableStateOf(false) }
     var showPantry by remember { mutableStateOf(false) }
+    var showEditName by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val app = context.applicationContext as HousinessApp
+    val settingsRepo = app.serviceLocator.settingsRepository
+    val scope = rememberCoroutineScope()
+
+    val settings by settingsRepo.observe().collectAsState(initial = null)
 
     if (previewInvoiceId != null) {
         InvoicePreviewScreen(
@@ -76,6 +89,38 @@ fun SettingsScreen() {
         return
     }
 
+    if (showEditName) {
+        var nameInput by remember { mutableStateOf(settings?.businessName ?: "Your Business Name") }
+        AlertDialog(
+            onDismissRequest = { showEditName = false },
+            title = { Text("Business Name") },
+            text = {
+                OutlinedTextField(
+                    value = nameInput,
+                    onValueChange = { nameInput = it },
+                    label = { Text("Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        settingsRepo.save(AppSettings(businessName = nameInput.trim()))
+                        showEditName = false
+                    }
+                }) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditName = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -89,6 +134,28 @@ fun SettingsScreen() {
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showEditName = true }
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(Icons.Filled.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Business Name", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            settings?.businessName ?: "Your Business Name",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
 
             Card(
                 onClick = { showInvoiceHistory = true },

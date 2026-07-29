@@ -85,7 +85,7 @@ class OrderViewModel(
                 )
                 invoiceRepository.saveLineItems(listOf(lineItem))
 
-                orderRepository.update(order.copy(invoiceId = invoiceId, status = OrderStatus.COMPLETED))
+                orderRepository.update(order.copy(invoiceId = invoiceId))
                 _state.update { it.copy(invoiceGeneratedId = invoiceId, showDetailSheet = false) }
             } catch (_: Exception) { }
         }

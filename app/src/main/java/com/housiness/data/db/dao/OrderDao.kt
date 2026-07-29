@@ -35,6 +35,15 @@ interface OrderDao {
     suspend fun deleteAll()
 
     @Query("SELECT COALESCE(SUM(totalPrice), 0) FROM orders WHERE status = 'COMPLETED'")
+    fun observeTotalRevenue(): Flow<Long>
+
+    @Query("SELECT COALESCE(SUM(totalPrice - totalCost), 0) FROM orders WHERE status = 'COMPLETED'")
+    fun observeTotalProfit(): Flow<Long>
+
+    @Query("SELECT COUNT(*) FROM orders WHERE status = 'COMPLETED'")
+    fun observeCompletedOrderCount(): Flow<Int>
+
+    @Query("SELECT COALESCE(SUM(totalPrice), 0) FROM orders WHERE status = 'COMPLETED'")
     suspend fun getTotalRevenue(): Long
 
     @Query("SELECT COALESCE(SUM(totalPrice - totalCost), 0) FROM orders WHERE status = 'COMPLETED'")

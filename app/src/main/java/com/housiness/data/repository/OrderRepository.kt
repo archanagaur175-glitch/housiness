@@ -21,6 +21,12 @@ class OrderRepository(private val orderDao: OrderDao) {
 
     suspend fun delete(order: Order) = orderDao.delete(order)
 
+    fun observeTotalRevenue(): Flow<Long> = orderDao.observeTotalRevenue()
+
+    fun observeTotalProfit(): Flow<Long> = orderDao.observeTotalProfit()
+
+    fun observeCompletedOrderCount(): Flow<Int> = orderDao.observeCompletedOrderCount()
+
     suspend fun getTotalRevenue(): Long = orderDao.getTotalRevenue()
 
     suspend fun getTotalProfit(): Long = orderDao.getTotalProfit()

@@ -195,7 +195,7 @@ class ProductViewModel(
                             MaterialEntryMode.UNIT_BASED -> {
                                 val p = mat.pricePaid.toLongOrNull() ?: 0
                                 val sz = mat.unitSize.toLongOrNull() ?: 1
-                                if (sz > 0) p / sz else 0
+                                if (sz > 0) (p.toDouble() / sz).toLong() else 0
                             }
                         }
                         pantryRepository.insert(
@@ -208,6 +208,8 @@ class ProductViewModel(
                         )
                     }
                 }
+
+                _state.value = _state.value.copy(isSaving = false, savedProductId = productId)
             } catch (e: Throwable) {
                 _state.value = _state.value.copy(isSaving = false, error = e.message ?: "Save failed", savedProductId = productId ?: _state.value.savedProductId)
             }

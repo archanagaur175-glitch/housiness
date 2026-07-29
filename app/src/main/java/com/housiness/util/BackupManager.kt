@@ -16,12 +16,13 @@ data class BackupData(
     val orders: List<Order>,
     val invoices: List<Invoice>,
     val invoiceLineItems: List<InvoiceLineItem>,
-    val messageTemplates: List<MessageTemplate>
+    val messageTemplates: List<MessageTemplate>,
+    val settings: List<AppSettings> = emptyList()
 )
 
 object BackupManager {
 
-    private const val CURRENT_VERSION = 1
+    private const val CURRENT_VERSION = 2
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     fun generateFilename(): String {
@@ -36,8 +37,10 @@ object BackupManager {
         orderDao: OrderDao,
         invoiceDao: InvoiceDao,
         invoiceLineItemDao: InvoiceLineItemDao,
-        messageTemplateDao: MessageTemplateDao
+        messageTemplateDao: MessageTemplateDao,
+        settingsDao: SettingsDao
     ): String {
+        val currentSettings = settingsDao.get()
         val data = BackupData(
             version = CURRENT_VERSION,
             exportedAt = System.currentTimeMillis(),
@@ -47,7 +50,8 @@ object BackupManager {
             orders = orderDao.getAll(),
             invoices = invoiceDao.getAll(),
             invoiceLineItems = invoiceLineItemDao.getAll(),
-            messageTemplates = messageTemplateDao.getAll()
+            messageTemplates = messageTemplateDao.getAll(),
+            settings = if (currentSettings != null) listOf(currentSettings) else emptyList()
         )
         return gson.toJson(data)
     }
@@ -81,7 +85,8 @@ object BackupManager {
         orderDao: OrderDao,
         invoiceDao: InvoiceDao,
         invoiceLineItemDao: InvoiceLineItemDao,
-        messageTemplateDao: MessageTemplateDao
+        messageTemplateDao: MessageTemplateDao,
+        settingsDao: SettingsDao
     ) {
         if (mode == ImportMode.REPLACE) {
             productDao.deleteAll()
@@ -100,6 +105,8 @@ object BackupManager {
         invoiceDao.upsertAll(data.invoices)
         invoiceLineItemDao.upsertAll(data.invoiceLineItems)
         messageTemplateDao.upsertAll(data.messageTemplates)
+
+        data.settings.firstOrNull()?.let { settingsDao.save(it) }
     }
 
     sealed class ValidationResult {

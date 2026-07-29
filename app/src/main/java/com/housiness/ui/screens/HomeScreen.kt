@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.housiness.HousinessApp
 import com.housiness.util.CurrencyFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(onNavigateToProducts: () -> Unit = {}) {
     val context = LocalContext.current
@@ -31,7 +33,24 @@ fun HomeScreen(onNavigateToProducts: () -> Unit = {}) {
     )
     val summary by vm.summary.collectAsStateWithLifecycle()
 
+    var showHelp by remember { mutableStateOf(false) }
+
+    if (showHelp) {
+        HelpScreen(onBack = { showHelp = false })
+        return
+    }
+
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Housiness") },
+                actions = {
+                    IconButton(onClick = { showHelp = true }) {
+                        Icon(Icons.Filled.HelpOutline, contentDescription = "Help")
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToProducts) {
                 Icon(Icons.Filled.Add, contentDescription = "Add product")

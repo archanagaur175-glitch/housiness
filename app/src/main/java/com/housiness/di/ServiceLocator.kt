@@ -16,6 +16,7 @@ class ServiceLocator(context: Context) {
     val invoiceDao: InvoiceDao get() = db.invoiceDao()
     val invoiceLineItemDao: InvoiceLineItemDao get() = db.invoiceLineItemDao()
     val messageTemplateDao: MessageTemplateDao get() = db.messageTemplateDao()
+    val settingsDao: SettingsDao get() = db.settingsDao()
 
     val productRepository: ProductRepository by lazy {
         ProductRepository(db.productDao(), db.productMaterialDao())
@@ -35,5 +36,9 @@ class ServiceLocator(context: Context) {
 
     val messageTemplateRepository: MessageTemplateRepository by lazy {
         MessageTemplateRepository(db.messageTemplateDao())
+    }
+
+    val settingsRepository: SettingsRepository by lazy {
+        SettingsRepository(db.settingsDao())
     }
 }

@@ -14,13 +14,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.housiness.HousinessApp
 import com.housiness.ui.screens.*
+import kotlinx.coroutines.launch
 
 enum class BottomTab(val label: String, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
     HOME("Home", Icons.Filled.Home, Icons.Outlined.Home),
@@ -32,6 +35,27 @@ enum class BottomTab(val label: String, val selectedIcon: ImageVector, val unsel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
+    val context = LocalContext.current
+    val app = context.applicationContext as HousinessApp
+    val settingsRepo = app.serviceLocator.settingsRepository
+    val scope = rememberCoroutineScope()
+
+    var showSetup by remember { mutableStateOf<Boolean?>(null) }
+
+    LaunchedEffect(Unit) {
+        val settings = settingsRepo.get()
+        showSetup = settings == null || settings.businessName.isBlank()
+    }
+
+    val setupPending = showSetup
+    if (setupPending == true) {
+        SetupScreen(
+            settingsRepository = settingsRepo,
+            onComplete = { showSetup = false }
+        )
+        return
+    }
+
     val navController = rememberNavController()
     val tabs = BottomTab.entries
 

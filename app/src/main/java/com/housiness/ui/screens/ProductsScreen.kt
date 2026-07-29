@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlaylistAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.housiness.HousinessApp
 import com.housiness.data.db.entity.Product
 import com.housiness.ui.screens.product.AddProductScreen
+import com.housiness.ui.screens.product.BulkAddScreen
 import com.housiness.ui.screens.product.ProductEditScreen
 import com.housiness.util.CurrencyFormatter
 
@@ -28,12 +30,21 @@ fun ProductsScreen() {
     val products by repo.getAllFlow().collectAsStateWithLifecycle(initialValue = emptyList())
 
     var showAddScreen by remember { mutableStateOf(false) }
+    var showBulkAdd by remember { mutableStateOf(false) }
     var editProductId by remember { mutableStateOf<Long?>(null) }
 
     if (showAddScreen) {
         AddProductScreen(
             onSaved = { showAddScreen = false },
             onBack = { showAddScreen = false }
+        )
+        return
+    }
+
+    if (showBulkAdd) {
+        BulkAddScreen(
+            productRepository = repo,
+            onBack = { showBulkAdd = false }
         )
         return
     }
@@ -78,6 +89,12 @@ fun ProductsScreen() {
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
+                Spacer(Modifier.height(24.dp))
+                FilledTonalButton(onClick = { showBulkAdd = true }) {
+                    Icon(Icons.Filled.PlaylistAdd, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Bulk add products")
+                }
             }
         } else {
             LazyColumn(
@@ -88,11 +105,22 @@ fun ProductsScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 item {
-                    Text(
-                        text = "Your Products",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Your Products",
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        FilledTonalButton(onClick = { showBulkAdd = true }) {
+                            Icon(Icons.Filled.PlaylistAdd, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Bulk", style = MaterialTheme.typography.labelLarge)
+                        }
+                    }
                 }
                 items(products, key = { it.id }) { product ->
                     ProductCard(
